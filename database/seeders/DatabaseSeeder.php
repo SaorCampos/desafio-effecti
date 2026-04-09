@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Infrastructure\Eloquent\ClientModel;
+use App\Infrastructure\Eloquent\ServiceModel;
+use App\Models\UserModel;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,9 +16,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
+        UserModel::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        ClientModel::factory(10)->create();
+        ServiceModel::factory(10)->create();
     }
 }

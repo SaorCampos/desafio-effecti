@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        ClientModel::factory(10)->create();
-        ServiceModel::factory(10)->create();
+        ClientModel::factory(20)->create();
+        ServiceModel::factory(20)->create();
     }
 }

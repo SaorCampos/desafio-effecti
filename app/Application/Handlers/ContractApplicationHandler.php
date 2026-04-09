@@ -14,27 +14,46 @@ class ContractApplicationHandler
         private PricingService $pricingService
     ) {}
 
-    public function listAllContracts(array $filters = [])
+    public function handleList()
     {
-        return $this->repository->getAllWithClients($filters);
+        return $this->repository->getAllWithClients();
     }
 
-    public function createContract(array $data): array
+    public function handleStore(array $data): array
     {
+        return $this->saveContract(0, $data);
+    }
+
+    public function handleUpdate(int $id, array $data): array
+    {
+        return $this->saveContract($id, $data);
+    }
+    public function handleDelete(int $id): bool
+    {
+        return $this->repository->delete($id);
+    }
+
+    private function saveContract(int $id, array $data): array
+    {
+        // Converte os dados brutos da Request para Entidades de Domínio (ContractItem)
         $items = array_map(fn($item) => new ContractItem(
             serviceId: $item['service_id'],
             quantity: $item['quantity'],
-            unitValue: (float) $item['unitValue']
+            unitValue: (float) $item['unit_value']
         ), $data['items']);
         $contractEntity = new ContractEntity(
-            id: 0,
+            id: $id,
             clientId: $data['client_id'],
             items: $items,
             startDate: new \DateTime($data['start_date']),
-            status: 'active'
+            endDate: isset($data['end_date']) ? new \DateTime($data['end_date']) : null,
+            status: $data['status'] ?? 'active'
         );
+        // O Core da Regra de Negócio: Calcula qual estratégia dá o maior desconto
         $calculation = $this->pricingService->calculateBestPrice($contractEntity);
+        // Persistência Atómica via Repository
         $this->repository->save($contractEntity, $calculation);
+
         return $calculation;
     }
 }

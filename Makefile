@@ -19,7 +19,10 @@ down:
 	docker-compose down
 
 test:
-	docker exec -it effecti_app php artisan test
+	docker exec -it $(APP_CONTAINER) php artisan test
 
 shell:
-	docker exec -it effecti_app bash
+	docker exec -it $(APP_CONTAINER) bash
+
+seed:
+	docker exec -it $(APP_CONTAINER) php artisan db:seed

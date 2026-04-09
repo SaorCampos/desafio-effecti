@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 Route::controller(ContractController::class)->group(function () {
     Route::get('/contracts', 'index');
     Route::post('/contracts', 'store');
+    Route::put('/contracts/{id}', 'update');
+    Route::delete('/contracts/{id}', 'destroy');
 });
 
 Route::controller(ClientController::class)->group(function () {

@@ -16,15 +16,25 @@ class ContractController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $contracts = $this->applicationHandler->listAllContracts($request->all());
+        $contracts = $this->applicationHandler->handleList($request->all());
         return response()->json($contracts);
     }
     public function store(CreateContractRequest $request): JsonResponse
     {
-        $result = $this->applicationHandler->createContract($request->validated());
+        $result = $this->applicationHandler->handleStore($request->validated());
         return response()->json([
             'message' => 'Contrato criado com sucesso',
             'data' => $result
         ], 201);
+    }
+    public function update(Request $request, int $id)
+    {
+        $result = $this->applicationHandler->handleUpdate($id, $request->all());
+        return response()->json($result);
+    }
+    public function destroy(int $id)
+    {
+        $this->applicationHandler->handleDelete($id);
+        return response()->json(null, 204);
     }
 }

@@ -47,4 +47,8 @@ class EloquentContractRepository implements ContractRepositoryInterface
             ->map(fn($model) => ContractMapper::toEntity($model))
             ->toArray();
     }
+    public function delete(int $id): bool
+    {
+        return (bool)ContractModel::destroy($id);
+    }
 }

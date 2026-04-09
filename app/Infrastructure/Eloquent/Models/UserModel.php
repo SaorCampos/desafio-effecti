@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Infrastructure\Eloquent\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
@@ -17,6 +17,7 @@ class UserModel extends Authenticatable
 {
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
+    protected $table = 'users';
     /**
      * Get the attributes that should be cast.
      *

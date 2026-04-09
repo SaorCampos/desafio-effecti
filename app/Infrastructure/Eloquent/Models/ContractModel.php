@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Infrastructure\Eloquent;
+namespace App\Infrastructure\Eloquent\Models;
 
-use App\Infrastructure\Eloquent\ContractItemModel;
+use App\Infrastructure\Eloquent\Models\ContractItemModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ContractModel extends Model
 {
     use HasFactory;
+
+    protected $table = 'contracts';
 
     protected $fillable = [
         'client_id',

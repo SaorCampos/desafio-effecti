@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Infrastructure\Eloquent\ClientModel;
-use App\Infrastructure\Eloquent\ServiceModel;
-use App\Models\UserModel;
+use App\Infrastructure\Eloquent\Models\ClientModel;
+use App\Infrastructure\Eloquent\Models\ServiceModel;
+use App\Infrastructure\Eloquent\Models\UserModel;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
         UserModel::factory()->create([
             'name' => 'Test User',

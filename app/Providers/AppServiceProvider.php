@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Domain\Repositories\ContractRepositoryInterface;
+use App\Domain\Services\PricingService;
+use App\Domain\Strategies\LoyaltyDiscount;
+use App\Domain\Strategies\QuantityDiscount;
+use App\Infrastructure\Repositories\EloquentContractRepository;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +20,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            ContractRepositoryInterface::class,
+            EloquentContractRepository::class
+        );
+
+        $this->app->bind(PricingService::class, function ($app) {
+            return new PricingService(
+                new QuantityDiscount(),
+                new LoyaltyDiscount()
+            );
+        });
     }
 
     /**
@@ -37,14 +52,15 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
+        Password::defaults(
+            fn(): ?Password => app()->isProduction()
+                ? Password::min(12)
                 ->mixedCase()
                 ->letters()
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-            : null,
+                : null,
         );
     }
 }

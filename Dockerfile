@@ -1,0 +1,65 @@
+FROM php:8.4-fpm
+
+ARG user=saor
+ARG uid=1000
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libpq-dev \
+    zip \
+    unzip \
+    build-essential \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libbrotli-dev
+
+RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - \
+    && apt-get install -y nodejs
+
+# PHP Extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    pgsql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    sockets
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# User
+RUN useradd -G www-data,root -u $uid -d /home/$user $user \
+ && mkdir -p /home/$user/.composer \
+ && chown -R $user:$user /home/$user \
+ && chown -R $user:$user /var/www
+
+WORKDIR /var/www
+
+COPY composer.json composer.lock ./
+
+RUN composer install \
+    --ignore-platform-reqs \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts
+
+COPY . .
+
+# Config PHP
+COPY docker/php/custom.ini /usr/local/etc/php/conf.d/
+
+EXPOSE 9000
+
+USER $user

@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Domain\Repositories\ClientRepositoryInterface;
 use App\Domain\Repositories\ContractRepositoryInterface;
+use App\Domain\Repositories\ServiceRepositoryInterface;
 use App\Domain\Services\PricingService;
 use App\Domain\Strategies\LoyaltyDiscount;
 use App\Domain\Strategies\QuantityDiscount;
 use App\Infrastructure\Repositories\EloquentClientRepository;
 use App\Infrastructure\Repositories\EloquentContractRepository;
+use App\Infrastructure\Repositories\EloquentServiceRepository;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -66,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ClientRepositoryInterface::class,
             EloquentClientRepository::class
+        );
+        $this->app->bind(
+            ServiceRepositoryInterface::class,
+            EloquentServiceRepository::class
         );
     }
 

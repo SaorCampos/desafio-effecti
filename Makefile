@@ -8,6 +8,7 @@ setup:
 	docker compose exec $(APP_CONTAINER) php artisan migrate
 	docker compose exec $(APP_CONTAINER) php artisan config:clear
 	docker compose exec $(APP_CONTAINER) php artisan cache:clear
+	docker compose exec $(APP_CONTAINER) php artisan optimize:clear
 	docker compose exec $(APP_CONTAINER) npm install && npm run build
 	@echo "Aplicação rodando em: http://localhost:8011"
 

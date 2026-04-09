@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Domain\Repositories\ClientRepositoryInterface;
 use App\Domain\Repositories\ContractRepositoryInterface;
 use App\Domain\Services\PricingService;
 use App\Domain\Strategies\LoyaltyDiscount;
 use App\Domain\Strategies\QuantityDiscount;
+use App\Infrastructure\Repositories\EloquentClientRepository;
 use App\Infrastructure\Repositories\EloquentContractRepository;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -20,17 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(
-            ContractRepositoryInterface::class,
-            EloquentContractRepository::class
-        );
-
-        $this->app->bind(PricingService::class, function ($app) {
-            return new PricingService(
-                new QuantityDiscount(),
-                new LoyaltyDiscount()
-            );
-        });
+        $this->registerRepositories();
+        $this->registerServices();
     }
 
     /**
@@ -62,5 +55,27 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
                 : null,
         );
+    }
+
+    private function registerRepositories(): void
+    {
+        $this->app->bind(
+            ContractRepositoryInterface::class,
+            EloquentContractRepository::class
+        );
+        $this->app->bind(
+            ClientRepositoryInterface::class,
+            EloquentClientRepository::class
+        );
+    }
+
+    private function registerServices(): void
+    {
+        $this->app->bind(PricingService::class, function ($app) {
+            return new PricingService(
+                new QuantityDiscount(),
+                new LoyaltyDiscount()
+            );
+        });
     }
 }

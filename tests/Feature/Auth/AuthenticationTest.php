@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
+use App\Infrastructure\Eloquent\Models\UserModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Features;
@@ -21,7 +21,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_screen()
     {
-        $user = User::factory()->create();
+        $user = UserModel::factory()->create();
 
         $response = $this->post(route('login.store'), [
             'email' => $user->email,
@@ -41,7 +41,7 @@ class AuthenticationTest extends TestCase
             'confirmPassword' => true,
         ]);
 
-        $user = User::factory()->create();
+        $user = UserModel::factory()->create();
 
         $user->forceFill([
             'two_factor_secret' => encrypt('test-secret'),
@@ -61,7 +61,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_not_authenticate_with_invalid_password()
     {
-        $user = User::factory()->create();
+        $user = UserModel::factory()->create();
 
         $this->post(route('login.store'), [
             'email' => $user->email,
@@ -73,7 +73,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_logout()
     {
-        $user = User::factory()->create();
+        $user = UserModel::factory()->create();
 
         $response = $this->actingAs($user)->post(route('logout'));
 
@@ -83,7 +83,7 @@ class AuthenticationTest extends TestCase
 
     public function test_users_are_rate_limited()
     {
-        $user = User::factory()->create();
+        $user = UserModel::factory()->create();
 
         RateLimiter::increment(md5('login'.implode('|', [$user->email, '127.0.0.1'])), amount: 5);
 

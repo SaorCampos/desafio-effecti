@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Application\Services\ContractApplicationHandler;
+use App\Application\Handlers\ContractApplicationHandler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateContractRequest;
 use Illuminate\Http\JsonResponse;
@@ -34,7 +34,10 @@ class ContractController extends Controller
     }
     public function destroy(int $id)
     {
-        $this->applicationHandler->handleDelete($id);
-        return response()->json(null, 204);
+        $deleted = $this->applicationHandler->handleDelete($id);
+        if (!$deleted) {
+            return response()->json(['message' => 'Contrato não encontrado'], 404);
+        }
+        return response()->noContent(); // Retorna 204
     }
 }

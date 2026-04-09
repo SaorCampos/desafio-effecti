@@ -22,4 +22,13 @@ class CreateContractRequest extends FormRequest
             'items.*.unitValue' => 'required|numeric|min:0',
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'items.required' => 'O contrato precisa ter pelo menos um item de serviço.',
+            'items.*.service_id.exists' => 'Um dos serviços selecionados é inválido.',
+            'items.*.quantity.min' => 'A quantidade mínima de um item é 1.',
+            'end_date.after_or_equal' => 'A data de término não pode ser anterior à data de início.',
+        ];
+    }
 }

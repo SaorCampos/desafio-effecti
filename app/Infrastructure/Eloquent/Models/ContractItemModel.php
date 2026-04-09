@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Eloquent\Models;
 
 use App\Infrastructure\Eloquent\Models\ServiceModel;
+use Database\Factories\ContractItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,6 +26,16 @@ class ContractItemModel extends Model
 
     public function service()
     {
-        return $this->belongsTo(ServiceModel::class);
+        return $this->belongsTo(ServiceModel::class, 'service_id');
+    }
+
+    protected static function newFactory()
+    {
+        return ContractItemFactory::new();
+    }
+
+    public function contract()
+    {
+        return $this->belongsTo(ContractModel::class, 'contract_id');
     }
 }

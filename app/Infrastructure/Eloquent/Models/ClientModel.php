@@ -22,7 +22,7 @@ class ClientModel extends Model
 
     public function contracts()
     {
-        return $this->hasMany(ContractModel::class);
+        return $this->hasMany(ContractModel::class, 'client_id');
     }
 
     protected static function newFactory()

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Services;
+namespace App\Application\Handlers;
 
 use App\Domain\Entities\Contract as ContractEntity;
 use App\Domain\Entities\ContractItem;
@@ -39,7 +39,7 @@ class ContractApplicationHandler
         $items = array_map(fn($item) => new ContractItem(
             serviceId: $item['service_id'],
             quantity: $item['quantity'],
-            unitValue: (float) $item['unit_value']
+            unitValue: (float) $item['unitValue']
         ), $data['items']);
         $contractEntity = new ContractEntity(
             id: $id,

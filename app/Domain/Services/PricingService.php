@@ -16,21 +16,21 @@ class PricingService
 
     public function calculateBestPrice(Contract $contract): array
     {
-        $results = [];
-        $baseValue = $contract->getTotalBaseValue();
+        $baseTotal = $contract->getTotalBaseValue();
+        $bestDiscount = 0.0;
+        $appliedRule = 'none';
         foreach ($this->strategies as $strategy) {
-            $results[] = [
-                'rule' => $strategy->getName(),
-                'value' => (float) $strategy->calculate($contract)
-            ];
+            $discount = $strategy->calculate($contract);
+            if ($discount > $bestDiscount) {
+                $bestDiscount = $discount;
+                $appliedRule = $strategy->getName();
+            }
         }
-        // Encontra o menor valor (maior desconto)
-        $bestOption = collect($results)->sortBy('value')->first();
         return [
-            'base_total' => $baseValue,
-            'applied_rule' => $bestOption['rule'],
-            'final_value' => $bestOption['value'],
-            'rules_evaluated' => $results
+            'base_value' => $baseTotal,
+            'discount_value' => $bestDiscount,
+            'final_value' => $baseTotal - $bestDiscount,
+            'applied_rule' => $appliedRule,
         ];
     }
 }

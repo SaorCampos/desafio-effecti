@@ -28,9 +28,9 @@ class EloquentContractRepository implements ContractRepositoryInterface
             $model->items()->delete();
             foreach ($contract->items as $item) {
                 $model->items()->create([
-                    'service_id' => $item['service_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_value' => $item['unitValue'],
+                    'service_id' => $item->serviceId,
+                    'quantity'   => $item->quantity,
+                    'unit_value' => $item->unitValue,
                 ]);
             }
         });
@@ -49,6 +49,13 @@ class EloquentContractRepository implements ContractRepositoryInterface
     }
     public function delete(int $id): bool
     {
-        return (bool)ContractModel::destroy($id);
+        return DB::transaction(function () use ($id) {
+            $model = ContractModel::find($id);
+            if (!$model) {
+                return false;
+            }
+            $model->items()->delete();
+            return (bool) $model->delete();
+        });
     }
 }

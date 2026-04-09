@@ -7,7 +7,9 @@ use App\Domain\Repositories\ContractRepositoryInterface;
 use App\Domain\Repositories\ServiceRepositoryInterface;
 use App\Domain\Services\PricingService;
 use App\Domain\Strategies\LoyaltyDiscount;
+use App\Domain\Strategies\ProgressiveDiscount;
 use App\Domain\Strategies\QuantityDiscount;
+use App\Domain\Strategies\ServiceSurcharge;
 use App\Infrastructure\Repositories\EloquentClientRepository;
 use App\Infrastructure\Repositories\EloquentContractRepository;
 use App\Infrastructure\Repositories\EloquentServiceRepository;
@@ -80,7 +82,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PricingService::class, function ($app) {
             return new PricingService(
                 new QuantityDiscount(),
-                new LoyaltyDiscount()
+                new LoyaltyDiscount(),
+                new ServiceSurcharge(),
+                new ProgressiveDiscount()
             );
         });
     }

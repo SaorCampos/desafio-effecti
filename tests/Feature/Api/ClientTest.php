@@ -12,12 +12,20 @@ class ClientTest extends TestCase
 
     public function test_it_can_list_all_clients()
     {
-        ClientModel::factory()->count(3)->create();
+        ClientModel::factory()->count(10)->create();
         $response = $this->getJson('/api/clients');
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount(10, 'data');
     }
-
+    public function test_it_can_filter_clients_by_name()
+    {
+        ClientModel::factory()->create(['name' => 'João Silva']);
+        ClientModel::factory()->create(['name' => 'Maria Oliveira']);
+        $response = $this->getJson('/api/clients?name=João');
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.name', 'João Silva');
+    }
     public function test_it_can_create_a_client_with_valid_data()
     {
         $payload = [
@@ -33,7 +41,6 @@ class ClientTest extends TestCase
             'email' => 'teste@exemplo.com'
         ]);
     }
-
     public function test_it_fails_to_create_client_with_invalid_document()
     {
         $payload = [
@@ -46,7 +53,6 @@ class ClientTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['document']);
     }
-
     public function test_it_can_update_a_client()
     {
         $validDocument = '52998224725';
@@ -64,7 +70,6 @@ class ClientTest extends TestCase
         $response = $this->putJson("/api/clients/{$client->id}", $updatePayload);
         $response->assertStatus(200);
     }
-
     public function test_it_can_delete_a_client()
     {
         $client = ClientModel::factory()->create();
@@ -72,7 +77,6 @@ class ClientTest extends TestCase
         $response->assertStatus(204);
         $this->assertDatabaseMissing('clients', ['id' => $client->id]);
     }
-
     public function test_it_fails_on_duplicate_email()
     {
         ClientModel::factory()->create(['email' => 'duplicado@exemplo.com']);

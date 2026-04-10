@@ -6,6 +6,7 @@ use App\Domain\Entities\Client;
 use App\Domain\Repositories\ClientRepositoryInterface;
 use App\Infrastructure\Eloquent\Models\ClientModel;
 use App\Infrastructure\Mappers\ClientMapper;
+use \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EloquentClientRepository implements ClientRepositoryInterface
 {
@@ -34,5 +35,22 @@ class EloquentClientRepository implements ClientRepositoryInterface
     public function delete(int $id): bool
     {
         return (bool) ClientModel::destroy($id);
+    }
+    public function findAllPaginated(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = ClientModel::query();
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
+        }
+        if (!empty($filters['email'])) {
+            $query->where('email', 'like', '%' . $filters['email'] . '%');
+        }
+        if (!empty($filters['document'])) {
+            $query->where('document', 'like', '%' . $filters['document'] . '%');
+        }
+        $paginator = $query->paginate($perPage);
+        return $paginator->through(function ($model) {
+            return ClientMapper::toEntity($model);
+        });
     }
 }

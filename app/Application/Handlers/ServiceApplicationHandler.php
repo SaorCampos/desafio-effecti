@@ -9,7 +9,10 @@ class ServiceApplicationHandler
 {
     public function __construct(private ServiceRepositoryInterface $repository) {}
 
-    public function handleList() { return $this->repository->findAll(); }
+    public function handleList(array $filters = [])
+    {
+        return $this->repository->findAllPaginated($filters);
+    }
 
     public function handleStore(array $data)
     {
@@ -23,5 +26,8 @@ class ServiceApplicationHandler
         return $this->repository->save($service);
     }
 
-    public function handleDelete(int $id) { return $this->repository->delete($id); }
+    public function handleDelete(int $id)
+    {
+        return $this->repository->delete($id);
+    }
 }

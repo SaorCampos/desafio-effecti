@@ -13,8 +13,10 @@ class ContractMapper
         return new ContractEntity(
             id: $model->id,
             clientId: $model->client_id,
+            clientName: $model->client ? $model->client->name : null,
             items: $model->items->map(fn($item) => new ContractItem(
                 serviceId: $item->service_id,
+                serviceName: $item->service ? $item->service->name : null,
                 quantity: $item->quantity,
                 unitValue: (float) $item->unit_value
             ))->toArray(),

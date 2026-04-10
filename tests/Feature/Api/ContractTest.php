@@ -43,18 +43,20 @@ class ContractTest extends TestCase
         $this->assertNotNull($contract->calculation_history);
         $this->assertEquals('quantity_discount', $contract->calculation_history['applied_rule']);
     }
-
     public function test_it_lists_contracts_with_items_and_client()
     {
         // Criar um contrato via factory ou manualmente para testar o index
-        ContractModel::factory()
-            ->has(ContractItemModel::factory()->count(2), 'items')
+        ContractModel::factory()->count(10)
+            ->has(ContractItemModel::factory()->count(3), 'items')
             ->create();
         $response = $this->getJson('/api/contracts');
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                '*' => ['id', 'clientId', 'items', 'startDate', 'status']
-            ]);
+        $reponseBody = json_decode($response->getContent(), true);
+        $response->assertStatus(200);
+        foreach ($reponseBody['data'] as $contract) {
+            $this->assertArrayHasKey('clientId', $contract);
+            $this->assertArrayHasKey('items', $contract);
+            $this->assertCount(3, $contract['items']);
+        }
     }
     public function test_it_recalculates_price_when_items_are_removed()
     {

@@ -12,12 +12,11 @@ class ServiceTest extends TestCase
 
     public function test_it_can_list_all_services()
     {
-        ServiceModel::factory()->count(3)->create();
+        ServiceModel::factory()->count(10)->create();
         $response = $this->getJson('/api/services');
         $response->assertStatus(200)
-                 ->assertJsonCount(3);
+                 ->assertJsonCount(10, 'data');
     }
-
     public function test_it_can_create_a_service()
     {
         $payload = [
@@ -31,7 +30,6 @@ class ServiceTest extends TestCase
             'base_value' => 150.50
         ]);
     }
-
     public function test_it_fails_to_create_service_with_negative_value()
     {
         $payload = [
@@ -42,7 +40,6 @@ class ServiceTest extends TestCase
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(['base_value']);
     }
-
     public function test_it_can_update_a_service()
     {
         $service = ServiceModel::factory()->create([
@@ -61,7 +58,6 @@ class ServiceTest extends TestCase
             'base_value' => 120.00
         ]);
     }
-
     public function test_it_can_delete_a_service()
     {
         $service = ServiceModel::factory()->create();

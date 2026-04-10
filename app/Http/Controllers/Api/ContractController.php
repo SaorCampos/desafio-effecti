@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Application\Handlers\ContractApplicationHandler;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ContractListingRequest;
 use App\Http\Requests\CreateContractRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class ContractController extends Controller
         private ContractApplicationHandler $applicationHandler
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(ContractListingRequest $request): JsonResponse
     {
         $contracts = $this->applicationHandler->handleList($request->all());
         return response()->json($contracts);
@@ -38,6 +39,6 @@ class ContractController extends Controller
         if (!$deleted) {
             return response()->json(['message' => 'Contrato não encontrado'], 404);
         }
-        return response()->noContent(); // Retorna 204
+        return response()->noContent();
     }
 }

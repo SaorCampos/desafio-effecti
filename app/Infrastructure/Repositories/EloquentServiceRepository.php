@@ -6,6 +6,7 @@ use App\Domain\Entities\Service;
 use App\Domain\Repositories\ServiceRepositoryInterface;
 use App\Infrastructure\Eloquent\Models\ServiceModel;
 use App\Infrastructure\Mappers\ServiceMapper;
+use \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EloquentServiceRepository implements ServiceRepositoryInterface
 {
@@ -32,5 +33,22 @@ class EloquentServiceRepository implements ServiceRepositoryInterface
     public function delete(int $id): bool
     {
         return (bool) ServiceModel::destroy($id);
+    }
+    public function findAllPaginated(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = ServiceModel::query();
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
+        }
+        if (isset($filters['min_base_value'])) {
+            $query->where('base_value', '>=', $filters['min_base_value']);
+        }
+        if (isset($filters['max_base_value'])) {
+            $query->where('base_value', '<=', $filters['max_base_value']);
+        }
+        $paginator = $query->paginate($perPage);
+        return $paginator->through(function ($model) {
+            return ServiceMapper::toEntity($model);
+        });
     }
 }

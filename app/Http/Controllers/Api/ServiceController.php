@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Application\Handlers\ServiceApplicationHandler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateServiceRequest;
+use App\Http\Requests\ServiceListingRequest;
 
 class ServiceController extends Controller
 {
@@ -12,9 +13,9 @@ class ServiceController extends Controller
         private ServiceApplicationHandler $handler
     ) {}
 
-    public function index()
+    public function index(ServiceListingRequest $request)
     {
-        $services = $this->handler->handleList();
+        $services = $this->handler->handleList($request->all());
         return response()->json($services);
     }
 

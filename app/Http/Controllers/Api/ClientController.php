@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Application\Handlers\ClientApplicationHandler;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientListingRequest;
 use App\Http\Requests\CreateClientRequest;
 
 class ClientController extends Controller
@@ -12,9 +13,9 @@ class ClientController extends Controller
         private ClientApplicationHandler $handler
     ) {}
 
-    public function index()
+    public function index(ClientListingRequest $request)
     {
-        $clients = $this->handler->handleList();
+        $clients = $this->handler->handleList($request->all());
         return response()->json($clients);
     }
     public function store(CreateClientRequest $request)

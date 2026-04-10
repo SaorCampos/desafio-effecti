@@ -9,9 +9,9 @@ class ClientApplicationHandler
 {
     public function __construct(private ClientRepositoryInterface $repository) {}
 
-    public function handleList()
+    public function handleList(array $filters = [])
     {
-        return $this->repository->findAll();
+        return $this->repository->findAllPaginated($filters);
     }
 
     public function handleStore(array $data)

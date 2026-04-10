@@ -14,9 +14,9 @@ class ContractApplicationHandler
         private PricingService $pricingService
     ) {}
 
-    public function handleList()
+    public function handleList(array $filters = [])
     {
-        return $this->repository->getAllWithClients();
+        return $this->repository->findAllPaginated($filters);
     }
 
     public function handleStore(array $data): array
@@ -38,12 +38,14 @@ class ContractApplicationHandler
         // Converte os dados brutos da Request para Entidades de Domínio (ContractItem)
         $items = array_map(fn($item) => new ContractItem(
             serviceId: $item['service_id'],
+            serviceName: '',
             quantity: $item['quantity'],
             unitValue: (float) $item['unitValue']
         ), $data['items']);
         $contractEntity = new ContractEntity(
             id: $id,
             clientId: $data['client_id'],
+            clientName: '',
             items: $items,
             startDate: new \DateTimeImmutable($data['start_date']),
             endDate: isset($data['end_date']) ? new \DateTimeImmutable($data['end_date']) : null,

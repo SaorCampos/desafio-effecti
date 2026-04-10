@@ -6,6 +6,7 @@ use App\Domain\Entities\Contract;
 use App\Domain\Repositories\ContractRepositoryInterface;
 use App\Infrastructure\Eloquent\Models\ContractModel;
 use App\Infrastructure\Mappers\ContractMapper;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class EloquentContractRepository implements ContractRepositoryInterface
@@ -56,6 +57,27 @@ class EloquentContractRepository implements ContractRepositoryInterface
             }
             $model->items()->delete();
             return (bool) $model->delete();
+        });
+    }
+    public function findAllPaginated(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = ContractModel::query()
+            ->with(['client', 'items.service']);
+        if (!empty($filters['client_name'])) {
+            $query->whereHas('client', fn($q) => $q->where('name', 'like', '%' . $filters['client_name'] . '%'));
+        }
+        if (!empty($filters['service_name'])) {
+            $query->whereHas('items.service', fn($q) => $q->where('name', 'like', '%' . $filters['service_name'] . '%'));
+        }
+        if (!empty($filters['start_date'])) {
+            $query->whereDate('start_date', '>=', $filters['start_date']);
+        }
+        if (!empty($filters['end_date'])) {
+            $query->whereDate('end_date', '<=', $filters['end_date']);
+        }
+        $paginator = $query->paginate($perPage);
+        return $paginator->through(function ($model) {
+            return ContractMapper::toEntity($model);
         });
     }
 }

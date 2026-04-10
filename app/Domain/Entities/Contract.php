@@ -7,6 +7,7 @@ class Contract
     public function __construct(
         public readonly int $id,
         public readonly int $clientId,
+        public readonly ?string $clientName,
         /** @var ContractItem[] */
         public readonly array $items,
         public readonly \DateTimeImmutable $startDate,

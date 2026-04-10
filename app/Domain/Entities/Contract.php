@@ -8,6 +8,7 @@ class Contract
         public readonly int $id,
         public readonly int $clientId,
         public readonly ?string $clientName,
+        public readonly ?float $totalValue,
         /** @var ContractItem[] */
         public readonly array $items,
         public readonly \DateTimeImmutable $startDate,

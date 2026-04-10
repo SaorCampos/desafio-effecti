@@ -10,6 +10,7 @@ setup:
 	docker compose exec $(APP_CONTAINER) php artisan cache:clear
 	docker compose exec $(APP_CONTAINER) php artisan optimize:clear
 	docker compose exec $(APP_CONTAINER) npm install && npm run build
+	docker compose exec $(APP_CONTAINER) php artisan wayfinder:generate
 	@echo "Aplicação rodando em: http://localhost:8011"
 
 up:

@@ -75,6 +75,9 @@ class EloquentContractRepository implements ContractRepositoryInterface
         if (!empty($filters['end_date'])) {
             $query->whereDate('end_date', '<=', $filters['end_date']);
         }
+        if (!empty($filters['contract_id'])) {
+            $query->where('id', $filters['contract_id']);
+        }
         $paginator = $query->paginate($perPage);
         return $paginator->through(function ($model) {
             return ContractMapper::toEntity($model);

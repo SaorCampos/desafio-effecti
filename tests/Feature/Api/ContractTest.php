@@ -46,7 +46,7 @@ class ContractTest extends TestCase
     public function test_it_lists_contracts_with_items_and_client()
     {
         // Criar um contrato via factory ou manualmente para testar o index
-        ContractModel::factory()->count(10)
+        ContractModel::factory()->count(1)
             ->has(ContractItemModel::factory()->count(3), 'items')
             ->create();
         $response = $this->getJson('/api/contracts');

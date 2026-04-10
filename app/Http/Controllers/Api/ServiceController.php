@@ -6,6 +6,7 @@ use App\Application\Handlers\ServiceApplicationHandler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateServiceRequest;
 use App\Http\Requests\ServiceListingRequest;
+use Inertia\Inertia;
 
 class ServiceController extends Controller
 {
@@ -16,19 +17,39 @@ class ServiceController extends Controller
     public function index(ServiceListingRequest $request)
     {
         $services = $this->handler->handleList($request->all());
-        return response()->json($services);
+        if ($request->wantsJson()) {
+            return response()->json($services);
+        }
+        return Inertia::render('services/ServiceList', [
+            'services' => $services,
+            'filters' => $request->only(['search'])
+        ]);
     }
 
     public function store(CreateServiceRequest $request)
     {
-        $service = $this->handler->handleStore($request->validated());
-        return response()->json($service, 201);
+        $result = $this->handler->handleStore($request->validated());
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Serviço criado com sucesso',
+                'data' => $result
+            ], 201);
+        }
+        return redirect()->route('services.index')
+            ->with('success', 'Serviço criado com sucesso!');
     }
 
     public function update(CreateServiceRequest $request, int $id)
     {
-        $service = $this->handler->handleUpdate($id, $request->validated());
-        return response()->json($service);
+        $result = $this->handler->handleUpdate($id, $request->validated());
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Serviço atualizado com sucesso',
+                'data' => $result
+            ]);
+        }
+        return redirect()->route('services.index')
+            ->with('success', 'Serviço atualizado com sucesso!');
     }
 
     public function destroy(int $id)

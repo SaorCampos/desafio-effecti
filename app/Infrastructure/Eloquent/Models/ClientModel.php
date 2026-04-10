@@ -13,6 +13,10 @@ class ClientModel extends Model
 
     protected $table = 'clients';
 
+    protected $casts = [
+    'document' => 'encrypted',
+];
+
     protected $fillable = [
         'name',
         'document',

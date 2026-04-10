@@ -46,6 +46,7 @@ class ContractApplicationHandler
             id: $id,
             clientId: $data['client_id'],
             clientName: '',
+            totalValue: 0.0,
             items: $items,
             startDate: new \DateTimeImmutable($data['start_date']),
             endDate: isset($data['end_date']) ? new \DateTimeImmutable($data['end_date']) : null,

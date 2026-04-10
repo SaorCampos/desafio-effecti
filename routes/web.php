@@ -1,14 +1,23 @@
 <?php
 
+use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\ContractController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
+use Inertia\Inertia;
 
-Route::inertia('/', 'Welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+// Rota inicial (Dashboard)
+// Route::get('/', function () {
+//     return Inertia::render('Dashboard');
+// });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
-});
+// Rotas de Clientes
+Route::resource('clients', ClientController::class);
+
+// Rotas de Serviços
+Route::resource('services', ServiceController::class);
+
+// Rotas de Contratos
+Route::resource('contracts', ContractController::class);
 
 require __DIR__.'/settings.php';

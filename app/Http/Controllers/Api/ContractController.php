@@ -2,36 +2,58 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Application\Handlers\ClientApplicationHandler;
 use App\Application\Handlers\ContractApplicationHandler;
+use App\Application\Handlers\ServiceApplicationHandler;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ContractListingRequest;
 use App\Http\Requests\CreateContractRequest;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ContractController extends Controller
 {
     public function __construct(
-        private ContractApplicationHandler $applicationHandler
+        private ContractApplicationHandler $applicationHandler,
+        private ClientApplicationHandler $clientHandler,
+        private ServiceApplicationHandler $serviceHandler
+
     ) {}
 
-    public function index(ContractListingRequest $request): JsonResponse
+    public function index(ContractListingRequest $request)
     {
         $contracts = $this->applicationHandler->handleList($request->all());
-        return response()->json($contracts);
+        if ($request->wantsJson()) {
+            return response()->json($contracts);
+        }
+        return Inertia::render('contracts/ContractList', [
+            'contracts' => $contracts,
+            'filters' => $request->only(['client_id', 'service_id', 'status'])
+        ]);
     }
-    public function store(CreateContractRequest $request): JsonResponse
+    public function store(CreateContractRequest $request)
     {
         $result = $this->applicationHandler->handleStore($request->validated());
-        return response()->json([
-            'message' => 'Contrato criado com sucesso',
-            'data' => $result
-        ], 201);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Contrato criado com sucesso',
+                'data' => $result
+            ], 201);
+        }
+        return redirect()->route('contracts.index')
+            ->with('success', 'Contrato criado com sucesso!');
     }
     public function update(Request $request, int $id)
     {
         $result = $this->applicationHandler->handleUpdate($id, $request->all());
-        return response()->json($result);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Contrato atualizado com sucesso',
+                'data' => $result
+            ]);
+        }
+        return redirect()->route('contracts.index')
+            ->with('success', 'Contrato atualizado com sucesso!');
     }
     public function destroy(int $id)
     {
@@ -39,6 +61,28 @@ class ContractController extends Controller
         if (!$deleted) {
             return response()->json(['message' => 'Contrato não encontrado'], 404);
         }
-        return response()->noContent();
+        if (request()->wantsJson()) {
+            return response()->json(['message' => 'Contrato deletado com sucesso']);
+        }
+        return redirect()->route('contracts.index')
+            ->with('Contrato deletado com sucesso!');
+    }
+
+    public function create(Request $request)
+    {
+        return Inertia::render('contracts/ContractForm', [
+            'clients' => $this->clientHandler->handleList($request->all()),
+            'services' => $this->serviceHandler->handleList($request->all())
+        ]);
+    }
+    public function edit(int $id, ContractListingRequest $request)
+    {
+        $request['contract_id'] = $id;
+        $contract = $this->applicationHandler->handleList($request->all());
+        return Inertia::render('contracts/ContractForm', [
+            'contract' => $contract,
+            'clients' => $this->clientHandler->handleList($request->all()),
+            'services' => $this->serviceHandler->handleList($request->all())
+        ]);
     }
 }

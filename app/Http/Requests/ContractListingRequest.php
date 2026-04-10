@@ -13,6 +13,7 @@ class ContractListingRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'contract_id' => 'integer',
             'client_name' => 'string',
             'service_name' => 'string',
             'start_date' => 'date|format:Y-m-d',

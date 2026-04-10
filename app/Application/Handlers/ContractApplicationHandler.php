@@ -45,8 +45,8 @@ class ContractApplicationHandler
             id: $id,
             clientId: $data['client_id'],
             items: $items,
-            startDate: new \DateTime($data['start_date']),
-            endDate: isset($data['end_date']) ? new \DateTime($data['end_date']) : null,
+            startDate: new \DateTimeImmutable($data['start_date']),
+            endDate: isset($data['end_date']) ? new \DateTimeImmutable($data['end_date']) : null,
             status: $data['status'] ?? 'active'
         );
         // O Core da Regra de Negócio: Calcula qual estratégia dá o maior desconto

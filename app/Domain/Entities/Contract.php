@@ -9,8 +9,8 @@ class Contract
         public readonly int $clientId,
         /** @var ContractItem[] */
         public readonly array $items,
-        public readonly \DateTimeInterface $startDate,
-        public readonly ?\DateTimeInterface $endDate = null,
+        public readonly \DateTimeImmutable $startDate,
+        public readonly ?\DateTimeImmutable $endDate = null,
         public readonly string $status = 'active'
     ) {}
 

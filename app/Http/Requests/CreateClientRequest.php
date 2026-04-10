@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateClientRequest extends FormRequest
 {
@@ -13,14 +14,20 @@ class CreateClientRequest extends FormRequest
 
     public function rules(): array
     {
+        $routeParam = $this->route('client') ?? $this->route('id');
+        $clientId = is_object($routeParam) ? $routeParam->id : $routeParam;
         return [
             'name' => 'required|string|max:255',
             'document' => [
                 'required',
                 'string',
-                'unique:clients,document,' . $this->client,
+                Rule::unique('clients', 'document')->ignore($clientId),
             ],
-            'email' => 'required|email|unique:clients,email,' . $this->client,
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('clients', 'email')->ignore($clientId),
+            ],
             'status' => 'required|in:active,inactive'
         ];
     }

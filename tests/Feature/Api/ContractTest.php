@@ -21,6 +21,7 @@ class ContractTest extends TestCase
         $payload = [
             'client_id' => $client->id,
             'start_date' => now()->format('Y-m-d'),
+            'end_date' => now()->addMonth()->format('Y-m-d'),
             'status' => 'active',
             'items' => [
                 [

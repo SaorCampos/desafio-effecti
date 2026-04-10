@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Mappers;
 
 use App\Domain\Entities\Contract as ContractEntity;
-use App\Domain\Entities\ContractItem; // Importante
+use App\Domain\Entities\ContractItem;
 use App\Infrastructure\Eloquent\Models\ContractModel;
 
 class ContractMapper

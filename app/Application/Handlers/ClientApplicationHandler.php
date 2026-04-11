@@ -30,4 +30,9 @@ class ClientApplicationHandler
     {
         return $this->repository->delete($id);
     }
+
+    public function handleFindById(int $id): ?Client
+    {
+        return $this->repository->findById($id);
+    }
 }

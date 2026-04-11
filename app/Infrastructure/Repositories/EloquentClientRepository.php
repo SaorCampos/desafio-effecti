@@ -48,6 +48,12 @@ class EloquentClientRepository implements ClientRepositoryInterface
         if (!empty($filters['document'])) {
             $query->where('document', 'like', '%' . $filters['document'] . '%');
         }
+        if (!empty($filters['client_id'])) {
+            $query->where('id', $filters['client_id']);
+        }
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
         $paginator = $query->paginate($perPage);
         return $paginator->through(function ($model) {
             return ClientMapper::toEntity($model);

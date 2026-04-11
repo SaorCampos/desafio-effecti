@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm, router } from '@inertiajs/vue3';
-import { Plus, Trash2, ArrowLeft } from 'lucide-vue-next';
+import { Plus, Trash2, ArrowLeft, Save } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -9,6 +9,7 @@ const props = defineProps<{
     contract?: any;
 }>();
 
+// Centralizador de dados: Resolve o problema da lista vs objeto único
 const contractData = computed(() => {
     if (!props.contract) return null;
     return props.contract.data ? props.contract.data[0] : props.contract;
@@ -27,6 +28,7 @@ const form = useForm({
     start_date: contractData.value ? formatDate(contractData.value.startDate) : new Date().toISOString().split('T')[0],
     end_date: contractData.value ? formatDate(contractData.value.endDate) : new Date().toISOString().split('T')[0],
     status: contractData.value?.status ?? 'active',
+
     items: contractData.value?.items?.map((item: any) => ({
         service_id: item.serviceId,
         quantity: item.quantity,
@@ -55,6 +57,7 @@ const updatePrice = (index: number) => {
 
 const submit = () => {
     if (isEditing.value) {
+        // Agora usamos o ID vindo da computed segura
         form.put(`/contracts/${contractData.value.id}`, {
             onSuccess: () => router.visit('/contracts'),
         });
@@ -67,23 +70,25 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="mx-auto max-w-5xl p-8 text-gray-500">
+    <div class="mx-auto max-w-5xl p-8 text-white">
         <div class="mb-6 flex items-center justify-between">
             <h1 class="text-2xl font-bold">
-                {{ isEditing ? 'Editar Contrato #' + props.contract.data[0].id : 'Novo Contrato' }}
+                {{ isEditing ? 'Editar Contrato #' + contractData?.id : 'Novo Contrato' }}
             </h1>
-            <button type="button" @click="router.visit('/contracts')" class="text-sm text-gray-400 hover:text-black">
-                <ArrowLeft class="inline-block mr-1" :size="18" /> Voltar
+            <button type="button" @click="router.visit('/contracts')"
+                    class="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
+                <ArrowLeft :size="18" /> Voltar
             </button>
         </div>
 
         <form @submit.prevent="submit" class="space-y-6">
-            <div class="grid grid-cols-2 gap-6 rounded-lg bg-slate-800 p-6 shadow">
+            <div class="grid grid-cols-2 gap-6 rounded-lg bg-slate-800 p-6 shadow-lg border border-slate-700">
                 <div class="flex flex-col">
                     <label class="mb-2 text-sm text-gray-400">Cliente</label>
-                    <select v-model="form.client_id" class="rounded border-none bg-slate-700 p-2">
+                    <select v-model="form.client_id"
+                            class="rounded border-none bg-slate-700 p-2 text-white focus:ring-2 focus:ring-blue-500">
                         <option value="">Selecione um cliente</option>
-                        <option v-for="client in clients?.data || clients || []" :key="client.id" :value="client.id">
+                        <option v-for="client in (clients?.data || clients || [])" :key="client.id" :value="client.id">
                             {{ client.name }}
                         </option>
                     </select>
@@ -95,30 +100,32 @@ const submit = () => {
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex flex-col">
                         <label class="mb-2 text-sm text-gray-400">Data de Início</label>
-                        <input type="date" v-model="form.start_date" class="rounded border-none bg-slate-700 p-2" />
+                        <input type="date" v-model="form.start_date"
+                               class="rounded border-none bg-slate-700 p-2 text-white focus:ring-2 focus:ring-blue-500" />
                     </div>
                     <div class="flex flex-col">
                         <label class="mb-2 text-sm text-gray-400">Data de Término</label>
-                        <input type="date" v-model="form.end_date" class="rounded border-none bg-slate-700 p-2" />
+                        <input type="date" v-model="form.end_date"
+                               class="rounded border-none bg-slate-700 p-2 text-white focus:ring-2 focus:ring-blue-500" />
                     </div>
                 </div>
             </div>
 
-            <div class="rounded-lg bg-slate-800 p-6 shadow">
-                <div class="mb-4 flex items-center justify-between">
+            <div class="rounded-lg bg-slate-800 p-6 shadow-lg border border-slate-700">
+                <div class="mb-4 flex items-center justify-between border-b border-slate-700 pb-4">
                     <h2 class="text-lg font-semibold">Serviços do Contrato</h2>
                     <button type="button" @click="addItem"
-                        class="flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-sm hover:bg-blue-500">
+                        class="flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-sm hover:bg-blue-500 transition-colors">
                         <Plus :size="16" /> Adicionar Item
                     </button>
                 </div>
 
                 <div v-for="(item, index) in form.items" :key="index"
-                    class="mb-4 grid grid-cols-12 items-end gap-4 border-b border-slate-700 pb-4">
+                    class="mb-4 grid grid-cols-12 items-end gap-4 border-b border-slate-700/50 pb-4 last:border-0">
                     <div class="col-span-5 flex flex-col">
                         <label class="mb-1 text-xs text-gray-400">Serviço</label>
                         <select v-model="item.service_id" @change="updatePrice(index)"
-                            class="rounded border-none bg-slate-700 p-2">
+                            class="rounded border-none bg-slate-700 p-2 text-white focus:ring-2 focus:ring-blue-500">
                             <option value="" disabled>Selecione...</option>
                             <option v-for="service in serviceList" :key="service.id" :value="service.id">
                                 {{ service.name }}
@@ -129,18 +136,19 @@ const submit = () => {
                     <div class="col-span-2 flex flex-col">
                         <label class="mb-1 text-xs text-gray-400">Qtd</label>
                         <input type="number" v-model="item.quantity" min="1"
-                            class="rounded border-none bg-slate-700 p-2" />
+                            class="rounded border-none bg-slate-700 p-2 text-white" />
                     </div>
 
                     <div class="col-span-3 flex flex-col">
                         <label class="mb-1 text-xs text-gray-400">Valor Unit. (R$)</label>
                         <input type="number" v-model="item.unitValue" readonly
-                            class="rounded border-none bg-slate-700/50 p-2 text-gray-400" />
+                            class="rounded border-none bg-slate-700/50 p-2 text-gray-500 cursor-not-allowed" />
                     </div>
 
                     <div class="col-span-2 flex justify-end">
-                        <button type="button" @click="removeItem(index)" class="p-2 text-red-400 hover:text-red-300"
-                            v-if="form.items.length > 1">
+                        <button type="button" @click="removeItem(index)"
+                                class="p-2 text-red-400 hover:text-red-300 transition-colors"
+                                v-if="form.items.length > 1">
                             <Trash2 :size="20" />
                         </button>
                     </div>
@@ -148,11 +156,13 @@ const submit = () => {
             </div>
 
             <div class="flex justify-end gap-4">
-                <button type="button" @click="router.visit('/contracts')" class="px-6 py-2">
+                <button type="button" @click="router.visit('/contracts')"
+                        class="px-6 py-2 text-gray-400 hover:text-white transition-colors">
                     Cancelar
                 </button>
                 <button type="submit" :disabled="form.processing"
-                    class="rounded bg-green-600 px-8 py-2 font-bold hover:bg-green-500 disabled:opacity-50">
+                    class="flex items-center gap-2 rounded bg-green-600 px-8 py-2 font-bold hover:bg-green-500 disabled:opacity-50 transition-all shadow-lg">
+                    <Save :size="18" v-if="!form.processing" />
                     {{ isEditing ? 'Atualizar Contrato' : 'Salvar Contrato' }}
                 </button>
             </div>

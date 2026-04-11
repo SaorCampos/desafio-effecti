@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router, Link, Head } from '@inertiajs/vue3';
-import { Plus, Eye, FileText, Search, Trash2Icon } from 'lucide-vue-next';
+import { Plus, FileText, Search, Trash2Icon } from 'lucide-vue-next';
 import { reactive, watch } from 'vue';
 import debounce from 'lodash/debounce';
 
@@ -25,7 +25,6 @@ const state = reactive({
     search: props.filters.search || ''
 });
 
-// Filtro reativo para busca de contratos
 const handleSearch = debounce(() => {
     router.get('/contracts', { search: state.search }, {
         preserveState: true,
@@ -111,14 +110,14 @@ const deleteContract = (id: number) => {
                         </td>
                         <td class="p-4 text-right">
                             <div class="flex justify-end gap-2">
-                                <button class="p-2 hover:bg-slate-600 rounded-lg text-gray-400 hover:text-white transition">
+                                <button class="p-2 hover:bg-slate-600 rounded-lg text-blue-400 hover:text-blue-300 transition">
                                     <Link :href="`/contracts/${contract.id}/edit`"
                                         class="flex items-center ">
                                         <FileText :size="18" />
                                     </Link>
                                 </button>
                                 <button @click="deleteContract(contract.id)"
-                                    class="p-2 hover:bg-slate-600 rounded-lg text-gray-400 hover:text-red-600 transition">
+                                    class="p-2 hover:bg-slate-600 rounded-lg text-red-400 hover:text-red-300 transition">
                                     <Trash2Icon :size="18" />
                                 </button>
                             </div>

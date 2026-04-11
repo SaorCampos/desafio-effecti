@@ -59,13 +59,15 @@ class ContractController extends Controller
     {
         $deleted = $this->applicationHandler->handleDelete($id);
         if (!$deleted) {
-            return response()->json(['message' => 'Contrato não encontrado'], 404);
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Contrato não encontrado'], 404);
+            }
+            return redirect()->back()->withErrors(['error' => 'Contrato não encontrado.']);
         }
         if (request()->wantsJson()) {
-            return response()->json(['message' => 'Contrato deletado com sucesso']);
+            return response()->noContent();
         }
-        return redirect()->route('contracts.index')
-            ->with('Contrato deletado com sucesso!');
+        return redirect()->route('contracts.index');
     }
 
     public function create(Request $request)
@@ -75,10 +77,9 @@ class ContractController extends Controller
             'services' => $this->serviceHandler->handleList($request->all())
         ]);
     }
-    public function edit(int $id, ContractListingRequest $request)
+    public function edit(int $id, Request $request)
     {
-        $request['contract_id'] = $id;
-        $contract = $this->applicationHandler->handleList($request->all());
+        $contract = $this->applicationHandler->handleFindById($id);
         return Inertia::render('contracts/ContractForm', [
             'contract' => $contract,
             'clients' => $this->clientHandler->handleList($request->all()),

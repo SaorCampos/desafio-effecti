@@ -44,7 +44,29 @@ class ClientController extends Controller
     }
     public function destroy(int $id)
     {
-        $this->handler->handleDelete($id);
-        return response()->json(null, 204);
+        $deleted = $this->handler->handleDelete($id);
+        if (!$deleted) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Cliente não encontrado'], 404);
+            }
+            return redirect()->back()->withErrors(['error' => 'Cliente não encontrado.']);
+        }
+        if (request()->wantsJson()) {
+            return response()->noContent();
+        }
+        return redirect()->route('clients.index');
+    }
+
+    public function edit(int $id)
+    {
+
+        $client = $this->handler->handleFindById($id);
+        return Inertia::render('clients/ClientForm', [
+            'client' => $client
+        ]);
+    }
+    public function create()
+    {
+        return Inertia::render('clients/ClientForm');
     }
 }

@@ -32,6 +32,10 @@ class ContractApplicationHandler
     {
         return $this->repository->delete($id);
     }
+    public function handleFindById(int $id): ?ContractEntity
+    {
+        return $this->repository->findById($id);
+    }
 
     private function saveContract(int $id, array $data): array
     {

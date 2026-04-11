@@ -58,9 +58,7 @@ class ContractApplicationHandler
         );
         // O Core da Regra de Negócio: Calcula qual estratégia dá o maior desconto
         $calculation = $this->pricingService->calculateBestPrice($contractEntity);
-        // Persistência Atómica via Repository
         $this->repository->save($contractEntity, $calculation);
-
         return $calculation;
     }
 }

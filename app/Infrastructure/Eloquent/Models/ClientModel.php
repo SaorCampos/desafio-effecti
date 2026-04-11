@@ -14,8 +14,8 @@ class ClientModel extends Model
     protected $table = 'clients';
 
     protected $casts = [
-    'document' => 'encrypted',
-];
+        'document' => 'encrypted',
+    ];
 
     protected $fillable = [
         'name',
@@ -32,5 +32,17 @@ class ClientModel extends Model
     protected static function newFactory()
     {
         return ClientFactory::new();
+    }
+
+    protected static function booted()
+    {
+        static::saving(function ($client) {
+            if ($client->isDirty('document')) {
+                // Cria um hash do CPF puro (apenas números)
+                $rawDocument = preg_replace('/\D/', '', $client->document);
+                // Usa um Salt (APP_KEY) para que o hash seja único do seu app
+                $client->document_index = hash_hmac('sha256', $rawDocument, config('app.key'));
+            }
+        });
     }
 }

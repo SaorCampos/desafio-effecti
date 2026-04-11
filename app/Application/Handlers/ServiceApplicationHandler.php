@@ -30,4 +30,9 @@ class ServiceApplicationHandler
     {
         return $this->repository->delete($id);
     }
+
+    public function handleFindById(int $id): ?Service
+    {
+        return $this->repository->findById($id);
+    }
 }

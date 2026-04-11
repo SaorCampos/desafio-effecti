@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('document')->unique();
+            $table->string('document_index')->nullable()->index();
             $table->string('email')->unique();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();

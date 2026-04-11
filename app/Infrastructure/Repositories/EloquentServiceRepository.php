@@ -46,6 +46,9 @@ class EloquentServiceRepository implements ServiceRepositoryInterface
         if (isset($filters['max_base_value'])) {
             $query->where('base_value', '<=', $filters['max_base_value']);
         }
+        if (isset($filters['service_id'])) {
+            $query->where('id', $filters['service_id']);
+        }
         $paginator = $query->paginate($perPage);
         return $paginator->through(function ($model) {
             return ServiceMapper::toEntity($model);

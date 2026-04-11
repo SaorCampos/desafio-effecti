@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm, router } from '@inertiajs/vue3';
+import { useForm, router, Head } from '@inertiajs/vue3';
 import { ArrowLeft, Save } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -51,6 +51,9 @@ const maskedDocument = computed(() => {
 </script>
 
 <template>
+
+    <Head :title="isEditing ? 'Editar Cliente' : 'Novo Cliente'" />
+
     <div class="mx-auto max-w-4xl p-8 text-gray-100">
         <div class="mb-6 flex items-center justify-between">
             <div>

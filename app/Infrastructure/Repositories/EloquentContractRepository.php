@@ -38,7 +38,7 @@ class EloquentContractRepository implements ContractRepositoryInterface
     }
     public function findById(int $id): ?Contract
     {
-        $model = ContractModel::with('items')->find($id);
+        $model = ContractModel::with(['client', 'items'])->find($id);
         return $model ? ContractMapper::toEntity($model) : null;
     }
     public function getAllWithClients(): array

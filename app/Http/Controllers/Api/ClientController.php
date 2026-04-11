@@ -22,7 +22,7 @@ class ClientController extends Controller
         }
         return Inertia::render('clients/ClientList', [
             'clients' => $clients,
-            'filters' => $request->only(['name', 'status'])
+            'filters' => $request->only(['name', 'status', 'email', 'document'])
         ]);
     }
     public function store(CreateClientRequest $request)

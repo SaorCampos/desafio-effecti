@@ -46,7 +46,9 @@ class EloquentClientRepository implements ClientRepositoryInterface
             $query->where('email', 'like', '%' . $filters['email'] . '%');
         }
         if (!empty($filters['document'])) {
-            $query->where('document', 'like', '%' . $filters['document'] . '%');
+            $numbersOnly = preg_replace('/\D/', '', $filters['document']);
+            $searchHash = hash_hmac('sha256', $numbersOnly, config('app.key'));
+            $query->where('document_index', $searchHash);
         }
         if (!empty($filters['client_id'])) {
             $query->where('id', $filters['client_id']);

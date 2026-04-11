@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Rota inicial (Dashboard)
-// Route::get('/', function () {
-//     return Inertia::render('Dashboard');
-// });
+Route::get('/', function () {
+    return redirect()->route('contracts.index');
+});
 
 // Rotas de Clientes
 Route::resource('clients', ClientController::class);

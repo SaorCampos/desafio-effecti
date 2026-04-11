@@ -1,102 +1,171 @@
 <script setup lang="ts">
-import { router, Link, Head} from '@inertiajs/vue3';
-import { Plus, FileText, Search, Trash2Icon } from 'lucide-vue-next';
-import { reactive, watch } from 'vue';
+import { router, Link, Head } from '@inertiajs/vue3';
+import {
+    Plus, FileText, Search, Trash2,
+    Users, Briefcase, Package, X, CreditCard, Mail
+} from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 import debounce from 'lodash/debounce';
 
 const props = defineProps<{
-    clients: any
+    clients: any,
+    filters: any
 }>();
 
-const filters = reactive({
-    name: '',
-    status: ''
+const params = ref({
+    name: props.filters?.name || '',
+    document: props.filters?.document || '',
+    status: props.filters?.status || '',
+    email: props.filters?.email || '',
 });
 
-const search = debounce(() => {
-    router.get('/clients', {
-        name: filters.name,
-        status: filters.status
-    }, {
-        preserveState: true,
-        replace: true
-    });
-}, 500);
+const runSearch = debounce(() => {
+    const query = Object.fromEntries(
+        Object.entries(params.value).filter(([_, v]) => v !== '' && v !== null)
+    );
 
-watch(() => [filters.name, filters.status], search);
+    router.get('/clients', query, {
+        preserveState: true,
+        replace: true,
+    });
+}, 300);
+
+watch(() => params.value, () => {
+    runSearch();
+}, { deep: true });
+
+const clearFilters = () => {
+    params.value = { name: '', document: '', status: '', email: '' };
+};
 
 const deleteClient = (id: number) => {
     if (confirm('Deseja excluir este cliente?')) {
         router.delete(`/clients/${id}`);
     }
 };
+
+const handleDocumentInput = (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    params.value.document = input.value.replace(/\D/g, '');
+};
+
 </script>
 
 <template>
+
     <Head title="Clientes" />
 
-    <div class="p-6 text-gray-400">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">Gestão de Clientes</h1>
-            <Link href="/clients/create"
-                class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition">
-            <Plus :size="20" /> Novo Cliente
+    <div class="mx-auto max-w-6xl p-8 text-gray-400">
+
+        <div class="mb-8 flex gap-4 border-b border-slate-700 pb-6">
+            <div class="flex items-center gap-2 px-4 py-2 border-b-2 border-blue-500 text-blue-400 font-bold">
+                <Users :size="20" /> Clientes
+            </div>
+            <Link href="/contracts" class="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white transition">
+                <Briefcase :size="20" /> Contratos
+            </Link>
+            <Link href="/services" class="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white transition">
+                <Package :size="20" /> Serviços
             </Link>
         </div>
 
-        <div class="bg-slate-800 p-4 rounded shadow mb-6 flex gap-4">
-            <div class="relative flex-1">
-                <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" :size="18" />
-                <input v-model="filters.name" type="text" placeholder="Buscar por nome..."
-                    class="w-full bg-slate-900 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-blue-500" />
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-500">Gestão de Clientes</h1>
+                <p class="mt-1 text-gray-400">Gerencie sua base de clientes e contatos.</p>
             </div>
-
-            <select v-model="filters.status" class="bg-slate-700 border-none rounded text-white">
-                <option value="">Todos os Status</option>
-                <option value="active">Ativo</option>
-                <option value="inactive">Inativo</option>
-            </select>
+            <Link href="/clients/create"
+                class="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-500 shadow-lg shadow-blue-900/20">
+                <Plus :size="20" /> Novo Cliente
+            </Link>
         </div>
 
-        <div class="bg-slate-800 rounded shadow overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-slate-700 text-gray-300">
-                    <tr>
-                        <th class="p-4 uppercase text-xs">Nome</th>
-                        <th class="p-4 uppercase text-xs">Documento</th>
-                        <th class="p-4 uppercase text-xs">Status</th>
-                        <th class="p-4 uppercase text-xs text-right">Ações</th>
+        <div
+            class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-800 p-4 rounded-xl border border-slate-700 items-end">
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-semibold text-gray-300 uppercase">Nome / Razão Social</label>
+                <div class="relative">
+                    <Search class="absolute left-3 top-1 text-slate-500" :size="18" />
+                    <input v-model="params.name" type="text" placeholder="Buscar..."
+                        class="w-full bg-slate-900 border-none rounded-lg pl-10 text-sm focus:ring-2 focus:ring-blue-500 text-white" />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-semibold text-gray-300 uppercase">Documento (CPF/CNPJ)</label>
+                <div class="relative">
+                    <CreditCard class="absolute left-3 top-1 text-slate-500" :size="18" />
+                    <input v-model="params.document" type="text" placeholder="000.000..." maxlength="14" @input="handleDocumentInput"
+                        class="w-full bg-slate-900 border-none rounded-lg pl-10 text-sm focus:ring-2 focus:ring-blue-500 text-white" />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-semibold text-gray-300 uppercase">Email</label>
+                <div class="relative">
+                    <Mail class="absolute left-3 top-1 text-slate-500" :size="18" />
+                    <input v-model="params.email" type="email" placeholder="exemplo@dominio.com"
+                        class="w-full bg-slate-900 border-none rounded-lg pl-10 text-sm focus:ring-2 focus:ring-blue-500 text-white" />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-semibold text-gray-300 uppercase">Status</label>
+                <select v-model="params.status"
+                    class="w-full bg-slate-900 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 text-white py-2">
+                    <option value="">Todos os Status</option>
+                    <option value="active">Ativo</option>
+                    <option value="inactive">Inativo</option>
+                </select>
+            </div>
+
+            <button @click="clearFilters"
+                class="flex items-center justify-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:text-white transition bg-slate-700 rounded-lg hover:bg-slate-600">
+                <X :size="16" /> Limpar Filtros
+            </button>
+        </div>
+
+        <div class="overflow-hidden rounded-xl border border-slate-700 bg-slate-800 shadow-xl">
+            <table class="w-full border-collapse text-left">
+                <thead>
+                    <tr class="bg-slate-700/50 text-xs uppercase tracking-wider text-gray-300">
+                        <th class="p-4 font-semibold">Nome</th>
+                        <th class="p-4 font-semibold">Documento</th>
+                        <th class="p-4 font-semibold">Email</th>
+                        <th class="p-4 font-semibold">Status</th>
+                        <th class="p-4 font-semibold text-right pr-8">Ações</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="client in clients.data" :key="client.id"
-                        class="border-t border-slate-700 hover:bg-slate-700/50">
-                        <td class="p-4">{{ client.name }}</td>
-                        <td class="p-4 font-mono">{{ client.document }}</td>
+                <tbody class="divide-y divide-slate-700 text-slate-300">
+                    <tr v-for="client in clients.data" :key="client.id" class="transition hover:bg-slate-700/30">
+                        <td class="p-4 font-medium">{{ client.name }}</td>
+                        <td class="p-4 font-mono text-sm text-gray-400">{{ client.document }}</td>
+                        <td class="p-4">{{ client.email }}</td>
                         <td class="p-4">
                             <span :class="{
-                                'bg-green-900/50 text-green-400 border-green-800': client.status === 'active',
-                                'bg-gray-700 text-gray-400 border-gray-600': client.status !== 'active'
+                                'bg-green-900/40 text-green-400 border-green-800/50': client.status === 'active',
+                                'bg-gray-700/50 text-gray-400 border-gray-600/50': client.status !== 'active'
                             }" class="px-2.5 py-1 rounded-full text-xs font-medium border">
-                                {{ client.status }}
+                                {{ client.status === 'active' ? 'Ativo' : 'Inativo' }}
                             </span>
                         </td>
-                        <td class="p-4 text-right">
-                            <button @click="router.visit(`/clients/${client.id}/edit`)"
-                                class="text-blue-400 hover:text-blue-300 mr-3">
-                                <FileText :size="18" />
-                            </button>
-                            <button @click="deleteClient(client.id)" class="text-red-400 hover:text-red-300">
-                                <Trash2Icon :size="18" />
-                            </button>
+                        <td class="p-4 text-right pr-6">
+                            <div class="flex justify-end gap-2">
+                                <Link :href="`/clients/${client.id}/edit`"
+                                    class="rounded-lg p-2 text-blue-400 hover:bg-blue-400/10 transition">
+                                    <FileText :size="18" />
+                                </Link>
+                                <button @click="deleteClient(client.id)"
+                                    class="rounded-lg p-2 text-red-400 hover:bg-red-400/10 transition">
+                                    <Trash2 :size="18" />
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="clients.data.length === 0">
-                        <td colspan="6" class="p-12 text-center">
-                            <div class="flex flex-col items-center gap-3 text-gray-500">
-                                <FileText :size="48" class="opacity-20" />
-                                <p>Nenhum cliente encontrado para os filtros aplicados.</p>
-                            </div>
+                        <td colspan="5" class="p-12 text-center text-gray-500">
+                            <Users :size="48" class="mx-auto mb-4 opacity-20" />
+                            <p>Nenhum cliente encontrado para "{{ params.document || params.name }}".</p>
                         </td>
                     </tr>
                 </tbody>
@@ -104,13 +173,10 @@ const deleteClient = (id: number) => {
         </div>
 
         <div class="mt-6 flex justify-center gap-2">
-            <Link v-for="link in clients.links" :key="link.label" :href="link.url || '#'" v-html="link.label"
-                class="px-4 py-2 rounded-lg border text-sm transition" :class="{
-                    'bg-blue-600 border-blue-600 text-white font-bold': link.active,
-                    'border-slate-700 hover:bg-slate-700 text-gray-400': !link.active && link.url,
-                    'opacity-30 cursor-not-allowed border-slate-800': !link.url
-                }" />
+            <Link v-for="link in clients.links" :key="link.label" :href="link.url || '#'" :data="params"
+                v-html="link.label" class="rounded border px-4 py-2 text-sm transition-colors" :class="link.active
+                    ? 'bg-blue-600 border-blue-600 text-white'
+                    : 'border-slate-700 bg-slate-800 text-gray-400 hover:bg-slate-700'" />
         </div>
-
     </div>
 </template>

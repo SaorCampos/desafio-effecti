@@ -22,7 +22,7 @@ class ServiceController extends Controller
         }
         return Inertia::render('services/ServiceList', [
             'services' => $services,
-            'filters' => $request->only(['search'])
+            'filters' => (object) $request->only(['name', 'min_base_value', 'max_base_value'])
         ]);
     }
 
@@ -54,7 +54,28 @@ class ServiceController extends Controller
 
     public function destroy(int $id)
     {
-        $this->handler->handleDelete($id);
-        return response()->json(null, 204);
+        $deleted = $this->handler->handleDelete($id);
+        if (!$deleted) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Serviço não encontrado'], 404);
+            }
+            return redirect()->back()->withErrors(['error' => 'Serviço não encontrado.']);
+        }
+        if (request()->wantsJson()) {
+            return response()->noContent();
+        }
+        return redirect()->route('services.index');
+    }
+
+    public function edit(int $id)
+    {
+        $service = $this->handler->handleFindById($id);
+        return Inertia::render('services/ServiceForm', [
+            'service' => $service
+        ]);
+    }
+    public function create()
+    {
+        return Inertia::render('services/ServiceForm');
     }
 }

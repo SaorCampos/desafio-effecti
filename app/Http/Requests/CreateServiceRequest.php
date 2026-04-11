@@ -15,7 +15,8 @@ class CreateServiceRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'base_value' => 'required|numeric|min:0'
+            'base_value' => 'required|numeric|min:0',
+            'service_id' => 'sometimes|integer|exists:services,id'
         ];
     }
 }

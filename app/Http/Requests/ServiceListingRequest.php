@@ -13,9 +13,10 @@ class ServiceListingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string',
-            'min_base_value' => 'numeric|min:0',
-            'max_base_value' => 'numeric|min:0|gte:min_base_value',
+            'name' => 'string|nullable',
+            'min_base_value' => 'numeric|min:0|nullable',
+            'max_base_value' => 'numeric|min:0|nullable',
+            'service_id' => 'integer|exists:services,id|nullable',
         ];
     }
 }

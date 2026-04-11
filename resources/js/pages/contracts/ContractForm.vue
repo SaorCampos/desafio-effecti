@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm, router } from '@inertiajs/vue3';
+import { useForm, router, Head } from '@inertiajs/vue3';
 import { Plus, Trash2, ArrowLeft, Save } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -70,6 +70,9 @@ const submit = () => {
 </script>
 
 <template>
+
+    <Head :title="isEditing ? 'Editar Contrato' : 'Novo Contrato'" />
+
     <div class="mx-auto max-w-5xl p-8 text-white">
         <div class="mb-6 flex items-center justify-between">
             <h1 class="text-2xl font-bold">

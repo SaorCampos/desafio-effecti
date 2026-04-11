@@ -13,11 +13,11 @@ class ClientListingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string',
-            'email' => 'string|email',
-            'document' => 'string|regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/',
-            'client_id' => 'integer|exists:clients,id',
-            'status' => 'in:active,inactive',
+            'name' => 'string|nullable',
+            'email' => 'string|nullable',
+            'document' => 'string|nullable',
+            'client_id' => 'integer|exists:clients,id|nullable',
+            'status' => 'in:active,inactive|nullable',
         ];
     }
 }

@@ -28,16 +28,18 @@ class ClientTest extends TestCase
     }
     public function test_it_can_create_a_client_with_valid_data()
     {
+        $document = '52998224725';
         $payload = [
             'name' => 'Cliente Teste',
-            'document' => '52998224725',
+            'document' => $document,
             'email' => 'teste@exemplo.com',
             'status' => 'active'
         ];
+        $expectedHash = hash_hmac('sha256', $document, config('app.key'));
         $response = $this->postJson('/api/clients', $payload);
         $response->assertStatus(201);
         $this->assertDatabaseHas('clients', [
-            'document' => '52998224725',
+            'document_index' => $expectedHash,
             'email' => 'teste@exemplo.com'
         ]);
     }

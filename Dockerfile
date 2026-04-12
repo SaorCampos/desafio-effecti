@@ -57,6 +57,9 @@ RUN composer install \
 
 COPY . .
 
+RUN chown -R $user:$user /var/www/storage /var/www/bootstrap/cache
+RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
 # Config PHP
 COPY docker/php/custom.ini /usr/local/etc/php/conf.d/
 

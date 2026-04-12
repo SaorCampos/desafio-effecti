@@ -129,6 +129,7 @@ const handleDocumentInput = (e: Event) => {
             <table class="w-full border-collapse text-left">
                 <thead>
                     <tr class="bg-slate-700/50 text-xs uppercase tracking-wider text-gray-300">
+                        <th class="p-4 font-semibold">ID</th>
                         <th class="p-4 font-semibold">Nome</th>
                         <th class="p-4 font-semibold">Documento</th>
                         <th class="p-4 font-semibold">Email</th>
@@ -138,6 +139,7 @@ const handleDocumentInput = (e: Event) => {
                 </thead>
                 <tbody class="divide-y divide-slate-700 text-slate-300">
                     <tr v-for="client in clients.data" :key="client.id" class="transition hover:bg-slate-700/30">
+                        <td class="p-4 font-mono text-sm text-gray-500">#{{ client.id }}</td>
                         <td class="p-4 font-medium">{{ client.name }}</td>
                         <td class="p-4 font-mono text-sm text-gray-400">{{ client.document }}</td>
                         <td class="p-4">{{ client.email }}</td>
@@ -163,7 +165,7 @@ const handleDocumentInput = (e: Event) => {
                         </td>
                     </tr>
                     <tr v-if="clients.data.length === 0">
-                        <td colspan="5" class="p-12 text-center text-gray-500">
+                        <td colspan="6" class="p-12 text-center text-gray-500">
                             <Users :size="48" class="mx-auto mb-4 opacity-20" />
                             <p>Nenhum cliente encontrado para "{{ params.document || params.name }}".</p>
                         </td>

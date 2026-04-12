@@ -90,10 +90,9 @@ const deleteService = (id: number) => {
             <div class="flex flex-col gap-2">
                 <label class="text-xs font-semibold text-gray-300 uppercase">Nome do Serviço</label>
                 <div class="relative">
-                    <input v-model="params.name" type="text" placeholder="Buscar..."
-                        class="w-full bg-slate-900 border-none rounded-lg pl-10 text-sm focus:ring-2 focus:ring-blue-500 ">
                     <Search class="absolute left-3 top-1 text-slate-400" :size="18" />
-                    </input>
+                    <input v-model="params.name" type="text" placeholder="Buscar..."
+                        class="w-full bg-slate-900 border-none rounded-lg pl-10 text-sm focus:ring-2 focus:ring-blue-500 "/>
                 </div>
             </div>
 

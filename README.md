@@ -1,39 +1,52 @@
-# 🚀 ERP – Contratos e Serviços
+# ERP Management System - Clientes & Contratos
 
-![PHP Version](https://img.shields.io/badge/php-8.4-blue.svg)
-![Laravel Version](https://img.shields.io/badge/laravel-13-red.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+Este projeto é um sistema de gestão robusto para administração de clientes, serviços e contratos, focado em alta segurança de dados e performance. Desenvolvido com uma arquitetura moderna que separa as responsabilidades de negócio da infraestrutura.
 
----
-# PT-BR
+## 🚀 Funcionalidades Implementadas
 
-Este é um ERP de contratos e serviços, construído com **Laravel 13**.
+- **Gestão de Clientes**: Cadastro, edição e listagem com criptografia de dados sensíveis (LGPD ready).
+- **Busca Segura (Blind Index)**: Sistema de busca por documentos criptografados utilizando hashes determinísticos.
+- **Gestão de Contratos**: Controle de vigência, valores e itens de serviço.
+- **Vínculo de Serviços**: Adição de múltiplos serviços a um contrato com controle de quantidade e valor unitário.
+- **Interface Reativa**: Filtros em tempo real com debounce para otimização de requisições.
+- **Arquitetura Escalável**: Implementação de padrões de repositório e mappers para desacoplamento de banco de dados.
 
-## 📌 Funcionalidades Core
-* **Redirecionamento Instantâneo:** Respostas `302` ultra-rápidas com cache em Redis.
-* **Analytics Assíncrono:** Coleta de métricas sem impactar o tempo de resposta do usuário.
-* **Arquitetura DDD:** Código limpo, testável e desacoplado de infraestrutura.
+## 🛠 Tecnologias Utilizadas
 
----
+- **Backend**: PHP 8.4 + Laravel 11/13
+- **Frontend**: Vue 3 + Inertia.js + Tailwind CSS
+- **Banco de Dados**: PostgreSQL 14
+- **Containerização**: Docker & Docker Compose (PHP-FPM + Nginx)
+- **Ícones**: Lucide Vue
+- **Utilitários**: Lodash (Debounce), Makefile
 
-## 🚀 Como Rodar
+## 📦 Como Rodar o Projeto
 
-O projeto utiliza um **Makefile** para automatizar todo o setup via Docker.
+### Pré-requisitos
+- Docker e Docker Compose instalados.
+- Make (opcional, mas recomendado).
 
-1. **Instalação:** `make setup`
-2. **Acessar:** `http://localhost:8011`
+### Passo a passo
 
-> 📖 **Quer entender a engenharia por trás desses números?** > Confira o [Guia de Arquitetura e Decisões Técnicas](docs/architecture.md).
+1. **Setup Inicial**:
 
-> 📘 **Documentação OpenAPI**: O contrato completo da API pode ser visualizado no arquivo [openapi.yaml](docs/openapi.yaml). Você pode colar o conteúdo deste arquivo no [Swagger Editor](https://editor.swagger.io/) para testar a interface.
+   O comando abaixo irá construir as imagens, instalar dependências do Composer e NPM, rodar as migrations e gerar a chave da aplicação.
+   ```bash
+   make setup
+   ```
 
----
+2. **Acessar a Aplicação**:
 
-## 🔮 Roadmap
-* [ ] **Custom Aliases:** Permitir que o usuário escolha o nome da URL encurtada.
-* [ ] **Expiration Dates:** Definir data e hora para o link expirar automaticamente.
-* [ ] **Dashboard de Analytics:** Interface gráfica para visualização de cliques, países e dispositivos.
-* [ ] **Rate Limit Dinâmico:** Implementar limites por API Key ou IP para evitar abuso.
-* [ ] **GRPC Integration:** Para comunicação ainda mais rápida entre microserviços.
+    Abra o navegador em: http://localhost:8011
 
----
+3. **Executar Testes**:
+    ```bash
+   make test
+   ```
+    **Atenção**: O sistema utiliza criptografia baseada no APP_KEY. Não altere esta chave após popular o banco de dados, ou os documentos dos clientes não poderão ser descriptografados.
+
+4. **Popular o Banco de Dados**:
+    ```bash
+   make seed
+   ```
+   **Aviso**: Os dados de CPF/CNPJ introduzidos por esse comando não são reais e não iram passar na validação caso tente atualizar algum outro campo e não ajuste o documento.

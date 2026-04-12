@@ -50,3 +50,7 @@ Este projeto é um sistema de gestão robusto para administração de clientes, 
    make seed
    ```
    **Aviso**: Os dados de CPF/CNPJ introduzidos por esse comando não são reais e não iram passar na validação caso tente atualizar algum outro campo e não ajuste o documento.
+
+5. **Decisões Tecnicas**:
+
+    Confira o [Guia de Arquitetura e Decisões Técnicas](/architecture.md).

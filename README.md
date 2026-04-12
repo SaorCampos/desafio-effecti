@@ -13,7 +13,7 @@ Este projeto é um sistema de gestão robusto para administração de clientes, 
 
 ## 🛠 Tecnologias Utilizadas
 
-- **Backend**: PHP 8.4 + Laravel 11/13
+- **Backend**: PHP 8.4 + Laravel 13
 - **Frontend**: Vue 3 + Inertia.js + Tailwind CSS
 - **Banco de Dados**: PostgreSQL 14
 - **Containerização**: Docker & Docker Compose (PHP-FPM + Nginx)
